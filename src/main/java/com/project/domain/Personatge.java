@@ -24,10 +24,18 @@ public class Personatge implements Serializable {
     @Column(nullable = false)
     private Double defensa;
 
-    // TO DO
+    //TO DO
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faccio_id", nullable = false)
     private Faccio faccio;
 
-    // TO DO
+    //TO DO
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "personatge_habilitat",
+        joinColumns = @JoinColumn(name = "personatge_id"),
+        inverseJoinColumns = @JoinColumn(name = "habilitat_id")
+    )
     private Set<Habilitat> habilitats = new HashSet<>();
 
     // Constructors

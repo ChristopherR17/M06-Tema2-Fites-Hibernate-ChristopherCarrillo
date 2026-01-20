@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Habilitat")
+@Table(name = "habilitat")
 public class Habilitat implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,6 +25,7 @@ public class Habilitat implements Serializable {
     private Integer costEstamina;
 
     // TO DO
+    @ManyToMany(mappedBy = "habilitats", fetch = FetchType.LAZY)
     private Set<Personatge> personatges = new HashSet<>();
 
     // Constructors

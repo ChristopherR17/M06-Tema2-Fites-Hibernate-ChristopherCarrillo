@@ -22,6 +22,7 @@ public class Faccio implements Serializable {
     private String resum;
 
     // TO DO
+    @OneToMany(mappedBy = "faccio", fetch = FetchType.LAZY)
     private Set<Personatge> personatges = new HashSet<>();
 
     // Constructors

@@ -109,6 +109,22 @@ public class Manager {
         // -----
         // TO DO
         // -----
+        try {
+            session = factory.openSession();
+            tx = session.beginTransaction();
+
+            habilitat = new Habilitat(nom, descripcio, cost);
+            session.persist(habilitat);
+
+            tx.commit();
+
+            System.out.println("[OK] Habilitat creada: " + nom);
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
 
         return habilitat;
     }
@@ -142,8 +158,34 @@ public class Manager {
         Transaction tx = null;
         Personatge personatge = null;
         // -----
-        // TO DO
+        // TO DO 
         // -----
+        try {
+            session = factory.openSession();
+            tx = session.beginTransaction();
+
+            Faccio faccioDB = session.merge(faccio);
+
+            personatge = new Personatge(nom, atac, defensa, faccioDB);
+
+            if (habilitats != null) {
+                for (Habilitat h : habilitats) {
+                    Habilitat habilitatDB = session.merge(h);
+                    personatge.addHabilitat(habilitatDB);
+                }
+            }
+
+            session.persist(personatge);
+            tx.commit();
+
+            System.out.println("[OK] Personatge creat: " + nom);
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
         return personatge;
     }
 
@@ -202,5 +244,29 @@ public class Manager {
         // -----
         // TO DO
         // -----
+        Session session = null;
+        try {
+            session = factory.openSession();
+            var personatges = session.createQuery("FROM Personatge", Personatge.class).list();
+
+            System.out.println("\nPERSONATGES:");
+            for (Personatge p : personatges) {
+                System.out.println("   " + p.getNom() + "(" + p.getFaccio().getNom() + ")");
+                System.out.println("    Atac: " + p.getAtac() + " | Defensa: " + p.getDefensa());
+
+                System.out.print("    Habilitats: ");
+                if (p.getHabilitats().isEmpty()) {
+                    System.out.print("Cap habilitat");
+                } else {
+                    p.getHabilitats().forEach(h -> System.out.print(" " + h.getNom() + " "));
+                }
+                System.out.println();
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error llegint personatges: " + e.getMessage());
+        } finally {
+            if (session != null) session.close();
+        }
     }
 }
